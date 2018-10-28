@@ -1,0 +1,89 @@
+
+### Should give 404
+GET http://localhost:3003/
+
+### Get blogs
+GET http://localhost:3003/api/blogs
+
+### Post blog
+POST http://localhost:3003/api/blogs
+content-type: application/json
+Authorization:  bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiIiwiaWQiOiI1YmIxM2ZhMTVjMjJiMzIzNjA5NTE1ZTciLCJpYXQiOjE1MzgzNDM3NDR9.X-1YhYXYHnDWWNCL-amB9fvoxVonRmsrYcrpdC_Wd6g
+
+{
+  "title": "Testing likes 3",
+  "author": "me",
+  "url": "http://www.google.com/",
+  "likes": 3
+}
+
+### Post blog (no likes)
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+  "title": "Testing no likes",
+  "author": "me",
+  "url": "http://www.google.com/"
+}
+
+### Post blog (missing title)
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+  "author": "me",
+  "url": "http://www.google.com/",
+  "likes": 3
+}
+
+### Post blog (missing url)
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+  "title": "Testing no likes",
+  "author": "me",
+  "likes": 3
+}
+
+### Delete blog
+DELETE http://localhost:3003/api/blogs/5bb1438e1b59622554b152f7
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiIiwiaWQiOiI1YmIxM2ZhMTVjMjJiMzIzNjA5NTE1ZTciLCJpYXQiOjE1MzgzNDQ0MTB9.pJ63huL7WdLYvl1BZSgN-asVD3cqO-GRYLUnxkw9iuw
+
+### Update blog
+PUT http://localhost:3003/api/blogs/5bb13682b235f51be89cb1b4
+content-type: application/json
+
+{
+  "title": "Testing PUT",
+  "author": "me",
+  "url": "me@com",
+  "likes": 5
+}
+
+
+### Get users
+GET http://localhost:3003/api/users
+
+### Create user
+POST http://localhost:3003/api/users
+content-type: application/json
+
+{
+  "username": "Teppo",
+  "name": "Teppo Testaaja",
+  "password": "Sec111",
+  "adult": false
+}
+
+
+### Login
+POST http://localhost:3003/api/login
+content-type: application/json
+
+{
+  "username": "ab",
+  "password": "Sec"
+}
+
