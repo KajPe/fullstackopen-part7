@@ -8,6 +8,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import ShowUsers from './components/ShowUsers'
+import ShowUser from './components/ShowUser'
 
 class App extends React.Component {
   constructor(props) {
@@ -183,6 +184,12 @@ class App extends React.Component {
       </div>
     )
 
+    const showUser = (id) => (
+      <div>
+        <ShowUser id={id} />          
+      </div>
+    )
+
     const showBlogs = () => (
       <div>
         <h2>Blogs</h2>
@@ -244,6 +251,7 @@ class App extends React.Component {
           clearNotification={this.clearNotification}
         />
         <Route exact path='/users' render={() => showUsers() } />
+        <Route exact path='/users/:id' render={({match}) => showUser(match.params.id) } />
         <Route exact path='/login' render={() => loginForm() } />
         <Route exact path='/' render={() => showBlogs() } />
       </div>
