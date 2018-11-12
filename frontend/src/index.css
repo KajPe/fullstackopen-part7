@@ -11,3 +11,7 @@
 .info {
   color: green !important;
 }
+
+.usersheader {
+  font-weight: 700;
+}

@@ -1,22 +1,33 @@
 import React from 'react'
 import Blog from './components/Blog'
+import { Route, Redirect, withRouter } from 'react-router-dom'
 import NewBlog from './components/NewBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
+import ShowUsers from './components/ShowUsers'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
+
+    // Is user loggedin? Check it in early stage
+    let user = null
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      user = JSON.parse(loggedUserJSON)
+      blogService.setToken(user.token)
+    }
+
     this.state = {
       blogs: [],
       error: null,
       info: null,
       username: '',
       password: '',
-      user: null,
+      user: user,
       title: '',
       author: '',
       url: ''
@@ -25,13 +36,6 @@ class App extends React.Component {
 
   async componentDidMount() {
     try {
-      const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
-      if (loggedUserJSON) {
-        const user = JSON.parse(loggedUserJSON)
-        this.setState({ user })
-        blogService.setToken(user.token)
-      }            
-  
       const blogs = await blogService.getAll()
       this.setState({ blogs })
     } catch(exception) {
@@ -135,6 +139,8 @@ class App extends React.Component {
       blogService.setToken(user.token)
       const msg = 'User ' + user.name + ' successfully logged in.'
       this.setState({ username:'', password:'', user:user, info:msg })
+      this.props.history.push('/')
+
     } catch(exception) {
       this.setState({
         error: 'Bad username or password',
@@ -146,6 +152,7 @@ class App extends React.Component {
     window.localStorage.removeItem('loggedBlogUser')
     const msg = 'User ' + this.state.user.name + ' logged out.'
     this.setState({ user: null, info: msg })
+    this.props.history.push('/login')
   }
 
   render() {
@@ -161,10 +168,24 @@ class App extends React.Component {
       </Togglable>
     )
 
+    const header = () => (
+      <div>
+        <h1>Blog Application</h1>
+        {this.state.user !== null &&
+          <p>{this.state.user.name} logged in <button onClick={this.logout}>Logout</button></p>
+        }
+      </div>
+    )
+
+    const showUsers = () => (
+      <div>
+        <ShowUsers />          
+      </div>
+    )
+
     const showBlogs = () => (
       <div>
         <h2>Blogs</h2>
-        <p>{this.state.user.name} logged in <button onClick={this.logout}>Logout</button></p>
         {newBlogForm()}
         <br />
         {this.state.blogs
@@ -186,7 +207,6 @@ class App extends React.Component {
     const loginForm = () => {
       return (
         <div>
-          <h2>Login to application</h2>
           <LoginForm
             handleSubmit={this.login}
             handleChange={this.handleFieldChange}
@@ -197,18 +217,38 @@ class App extends React.Component {
       )
     }
 
+    if ((this.state.user == null) && (this.props.history.location.pathname !== '/login')) {
+      // Redirect to login page
+      return (
+        <div>
+          <Redirect to="/login" />
+        </div>
+      );
+    }
+    if ((this.state.user !== null) && (this.props.history.location.pathname === '/login')) {
+      // Redirect to blogs page, if loggedin and trying to get to /login url
+      return (
+        <div>
+          <Redirect to="/" />
+        </div>
+      );
+    }
+
+    // <Router> is already set in index.js for <App>
     return (
       <div>
+        {header()}
         <Notification
           message={this.state.error}
           info={this.state.info}
           clearNotification={this.clearNotification}
         />
-
-        { this.state.user === null ? loginForm() : showBlogs() }
+        <Route exact path='/users' render={() => showUsers() } />
+        <Route exact path='/login' render={() => loginForm() } />
+        <Route exact path='/' render={() => showBlogs() } />
       </div>
     )
   }
 }
 
-export default App;
+export default withRouter(App);
