@@ -9,6 +9,7 @@ import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import ShowUsers from './components/ShowUsers'
 import ShowUser from './components/ShowUser'
+import SimpleBlog from './components/SimpleBlog'
 
 class App extends React.Component {
   constructor(props) {
@@ -105,6 +106,11 @@ class App extends React.Component {
         error: 'Unable to update blog',
       })
     }
+  }
+
+  updateLike = (event, blog) => {
+    event.preventDefault()
+    this.likeBlog(blog)
   }
 
   deleteBlog = async (blog) => {
@@ -210,7 +216,20 @@ class App extends React.Component {
         )}
       </div>
     )
-  
+
+    const showBlog = (id) => {
+      const blog = this.state.blogs.find(ab => ab.id === id)
+      if (blog !== undefined) {
+        return (
+          <SimpleBlog blog={blog} onClick={(e) => this.updateLike(e, blog)} />
+        )
+      } else {
+        return (
+          <div>Blog not found ..</div>
+        )
+      }
+    }
+    
     const loginForm = () => {
       return (
         <div>
@@ -254,6 +273,7 @@ class App extends React.Component {
         <Route exact path='/users/:id' render={({match}) => showUser(match.params.id) } />
         <Route exact path='/login' render={() => loginForm() } />
         <Route exact path='/' render={() => showBlogs() } />
+        <Route exact path='/blogs/:id' render={({match}) => showBlog(match.params.id) } />
       </div>
     )
   }
