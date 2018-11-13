@@ -1,6 +1,7 @@
 import React from 'react'
 import Blog from './components/Blog'
-import { Route, Redirect, withRouter } from 'react-router-dom'
+import { Route, Redirect, withRouter, NavLink } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 import NewBlog from './components/NewBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -32,7 +33,8 @@ class App extends React.Component {
       user: user,
       title: '',
       author: '',
-      url: ''
+      url: '',
+      togglable: false
     }
   }
 
@@ -47,6 +49,10 @@ class App extends React.Component {
     }
   }
 
+  toggleVisibility = (event) => {
+    this.setState({ togglable: !this.state.togglable })
+  }
+
   clearNotification = () => {
     this.setState({
       error: null,
@@ -58,23 +64,24 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  addBLog = async (event) => {
+  addBLog = async (event,title,author,url) => {
     event.preventDefault()
     try {
       const blogObj = {
-        title: this.state.title,
-        author: this.state.author,
-        url: this.state.url
+        title: title,
+        author: author,
+        url: url
       }
 
       const anewBlog = await blogService.create(blogObj)
-      const msg = 'A new blog "' + this.state.title + '" by ' + this.state.author + ' added.'
+      const msg = 'A new blog "' + title + '" by ' + author + ' added.'
       this.setState({
         blogs: this.state.blogs.concat(anewBlog),
         title:'',
         author:'',
         url:'',
-        info: msg
+        info: msg,
+        togglable: false
       })
     } catch(exception) {
       this.setState({
@@ -163,14 +170,17 @@ class App extends React.Component {
   }
 
   render() {
-    const newBlogForm = () => (
-      <Togglable buttonLabel="New Blog" ref={component => this.blogForm = component}>
+    const NewBlogForm = () => (
+      // ref didn't work here as any change in state by this.handleFieldChange re-renders the App
+      // This would reset Togglable to hidden again.
+      <Togglable buttonLabel="New Blog" visible={this.state.togglable} toggleVisibility={this.toggleVisibility}>
         <NewBlog 
           title={this.state.title}
           author={this.state.author}
           url={this.state.url}
           addNewBlog={this.addBLog}
           handleFieldChange={this.handleFieldChange}
+          toggleVisibility={this.toggleVisibility}
         />
       </Togglable>
     )
@@ -179,7 +189,17 @@ class App extends React.Component {
       <div>
         <h1>Blog Application</h1>
         {this.state.user !== null &&
-          <p>{this.state.user.name} logged in <button onClick={this.logout}>Logout</button></p>
+          <div className="menuBackground">
+            <div className="menuDiv">
+              <NavLink className="menuStyle" exact to='/' activeClassName="selectedMenu">Blogs</NavLink>
+            </div>
+            <div className="menuDiv">
+              <NavLink className="menuStyle" exact to='/users' activeClassName="selectedMenu">Users</NavLink>
+           </div>
+            <div className="menuDivLogin">
+              {this.state.user.name} logged in <Button onClick={this.logout} className="loginbutton" bsSize="small" bsStyle="warning">Logout</Button>
+            </div>
+          </div>
         }
       </div>
     )
@@ -198,22 +218,20 @@ class App extends React.Component {
 
     const showBlogs = () => (
       <div>
-        <h2>Blogs</h2>
-        {newBlogForm()}
-        <br />
+        <h3>Blogs</h3>
+        <NewBlogForm />
+        <br></br>
         {this.state.blogs
           .sort(function(a,b) {
             return b.likes - a.likes
           })
           .map(blog => 
-          <Blog
-            key={blog.id}
-            blog={blog}
-            like={this.likeBlog}
-            delete={this.deleteBlog}
-            user={this.state.user}
-          />
-        )}
+            <Blog
+              key={blog.id}
+              blog={blog}
+            />
+          )
+        }
       </div>
     )
 
@@ -221,7 +239,10 @@ class App extends React.Component {
       const blog = this.state.blogs.find(ab => ab.id === id)
       if (blog !== undefined) {
         return (
-          <SimpleBlog blog={blog} onClick={(e) => this.updateLike(e, blog)} />
+          <SimpleBlog 
+            blog={blog} 
+            onClick={(e) => this.updateLike(e, blog)} 
+          />
         )
       } else {
         return (
@@ -262,7 +283,7 @@ class App extends React.Component {
 
     // <Router> is already set in index.js for <App>
     return (
-      <div>
+      <div className="container">
         {header()}
         <Notification
           message={this.state.error}

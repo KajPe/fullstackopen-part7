@@ -1,4 +1,5 @@
 import React from 'react'
+import { Well } from 'react-bootstrap'
 import userService from '../services/users'
 
 class ShowUser extends React.Component {
@@ -23,25 +24,23 @@ class ShowUser extends React.Component {
     if (this.state.user) {
       return (
         <div>
-          <h2>{this.state.user.name}</h2>
-          Added blogs
+          <h3>User: {this.state.user.name}</h3>
+          <div style={{ paddingLeft: '20px', paddingTop: '10px' }}>Added blogs</div>
           <ul>
             {
               this.state.user.blogs
                 .map(blog =>
-                  <li key={blog._id}>{blog.title} by {blog.author}</li>
+                  <Well key={blog._id} bsSize="small" style={{ marginBottom: '5px' }}>
+                    {blog.title} by {blog.author}
+                  </Well>
                 )
             }
           </ul>
         </div>
       )
-    } else {
-      return (
-        <div>
-          User not found ..
-        </div>
-      )
     }
+    // Return null if no user
+    return null
   }
 }
 

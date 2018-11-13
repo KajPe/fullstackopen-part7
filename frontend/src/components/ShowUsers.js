@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import userService from '../services/users'
+import { Badge, Well, Grid, Row, Col } from 'react-bootstrap'
 
 class ShowUsers extends React.Component {
   constructor(props) {
@@ -22,18 +23,24 @@ class ShowUsers extends React.Component {
   render() {
     return (
       <div>
-        <h2>Users</h2>
-        <table><tbody>
-        <tr className="usersheader"><td>User</td><td>Blogs added</td></tr>
-        {
-          this.state.users
-            .map(user =>
-              <tr key={user.id}>
-                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td><td>{user.blogs.length}</td>
-              </tr>
-            )
-        }
-        </tbody></table>
+        <h3>Users</h3>
+        <Grid>
+          <Row>
+            <Col sm={2} style={{ paddingLeft: '50px' }}>User</Col>
+            <Col sm={2} className="text-center">Blogs added</Col>
+          </Row>
+          {
+            this.state.users
+              .map(user =>
+                <Well key={user.id} bsSize="small" style={{ marginBottom: '5px' }}>
+                  <Row>
+                    <Col sm={2}><Link to={`/users/${user.id}`}>{user.name}</Link></Col>
+                    <Col sm={2} className="text-center"><Badge>{user.blogs.length}</Badge></Col>
+                  </Row>                
+                </Well>
+              )
+          }
+        </Grid>
       </div>
     )
   }
