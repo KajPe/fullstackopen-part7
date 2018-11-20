@@ -2,6 +2,8 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import userService from '../services/users'
 import { Badge, Well, Grid, Row, Col } from 'react-bootstrap'
+import { notificationError } from './../reducers/notificationReducer'
+import { connect } from 'react-redux'
 
 class ShowUsers extends React.Component {
   constructor(props) {
@@ -16,7 +18,7 @@ class ShowUsers extends React.Component {
       const users = await userService.getAll()
       this.setState({ users })
     } catch(exception) {
-      console.log('Failed to retrieve users')
+      this.props.notificationError('Failed to retrieve users')
     }
   }
 
@@ -46,4 +48,7 @@ class ShowUsers extends React.Component {
   }
 }
 
-export default ShowUsers
+export default connect(
+  null,
+  { notificationError }
+)(ShowUsers)

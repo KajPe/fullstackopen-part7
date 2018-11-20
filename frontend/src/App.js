@@ -2,15 +2,17 @@ import React from 'react'
 import Blog from './components/Blog'
 import { Route, Redirect, withRouter, NavLink } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
+import { connect } from 'react-redux'
 import NewBlog from './components/NewBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import ShowUsers from './components/ShowUsers'
 import ShowUser from './components/ShowUser'
 import SimpleBlog from './components/SimpleBlog'
+import Notification from './components/Notification'
+import { notificationInfo, notificationError } from './reducers/notificationReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -26,8 +28,6 @@ class App extends React.Component {
 
     this.state = {
       blogs: [],
-      error: null,
-      info: null,
       username: '',
       password: '',
       user: user,
@@ -44,21 +44,12 @@ class App extends React.Component {
       const blogs = await blogService.getAll()
       this.setState({ blogs })
     } catch(exception) {
-      this.setState({
-        error: 'Failed to retrieve blogs',
-      })
+      this.props.notificationError('Failed to retrieve blogs')
     }
   }
 
   toggleVisibility = (event) => {
     this.setState({ togglable: !this.state.togglable })
-  }
-
-  clearNotification = () => {
-    this.setState({
-      error: null,
-      info: null
-    })
   }
 
   handleFieldChange = (event) => {
@@ -76,18 +67,16 @@ class App extends React.Component {
 
       const anewBlog = await blogService.create(blogObj)
       const msg = 'A new blog "' + title + '" by ' + author + ' added.'
+      this.props.notificationInfo(msg)
       this.setState({
         blogs: this.state.blogs.concat(anewBlog),
         title:'',
         author:'',
         url:'',
-        info: msg,
         togglable: false
       })
     } catch(exception) {
-      this.setState({
-        error: 'Unable to save blog',
-      })
+      this.props.notificationError('Unable to save blog')
     }
   }
 
@@ -104,15 +93,13 @@ class App extends React.Component {
 
       const updBlog = await blogService.update(blogObj)
       const msg = 'The blog "' + blog.title + '" was liked.'
+      this.props.notificationInfo(msg)
       const blogs = this.state.blogs.map(ab => ab.id !== blog.id ? ab : updBlog)
       this.setState({
-        blogs: blogs,
-        info: msg
+        blogs: blogs
       })
     } catch(exception) {
-      this.setState({
-        error: 'Unable to update blog',
-      })
+      this.props.notificationError('Unable to update blog')
     }
   }
 
@@ -133,10 +120,9 @@ class App extends React.Component {
         blogs: blogs,
         newcomment: ''
       })
+      this.props.notificationInfo('Added new comment')
     } catch(exception) {
-      this.setState({
-        error: 'Failed to save comment'
-      })
+      this.props.notificationError('Failed to save comment')
     }
   }
 
@@ -144,20 +130,16 @@ class App extends React.Component {
     try {
       await blogService.remove(blog.id)
       const msg = 'The blog "' + blog.title + '" was removed.'
+      this.props.notificationInfo(msg)
       const blogs = this.state.blogs.filter(ab => ab.id !== blog.id)
       this.setState({
-        blogs: blogs,
-        info: msg
+        blogs: blogs
       })
     } catch(exception) {
       if (exception.response.data.error) {
-        this.setState({
-          error: exception.response.data.error
-        })
+        this.props.notificationError(exception.response.data.error)
       } else {
-        this.setState({
-          error: 'Unable to remove blog',
-        })
+        this.props.notificationError('Unable to remove blog')
       }
     }
   }
@@ -172,20 +154,21 @@ class App extends React.Component {
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       blogService.setToken(user.token)
       const msg = 'User ' + user.name + ' successfully logged in.'
-      this.setState({ username:'', password:'', user:user, info:msg })
+      this.props.notificationInfo(msg)
+      this.setState({ username:'', password:'', user:user })
       this.props.history.push('/')
-
     } catch(exception) {
-      this.setState({
-        error: 'Bad username or password',
-      })
+      this.props.notificationError('Bad username or password')
     }
   }
 
   logout = () => {
     window.localStorage.removeItem('loggedBlogUser')
     const msg = 'User ' + this.state.user.name + ' logged out.'
-    this.setState({ user: null, info: msg })
+    this.props.notificationInfo(msg)
+    this.setState({
+      user: null 
+    })
     this.props.history.push('/login')
   }
 
@@ -308,11 +291,7 @@ class App extends React.Component {
     return (
       <div className="container">
         {header()}
-        <Notification
-          message={this.state.error}
-          info={this.state.info}
-          clearNotification={this.clearNotification}
-        />
+        <Notification />
         <Route exact path='/users' render={() => showUsers() } />
         <Route exact path='/users/:id' render={({match}) => showUser(match.params.id) } />
         <Route exact path='/login' render={() => loginForm() } />
@@ -323,4 +302,9 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(
+  connect(
+    null,
+    { notificationInfo, notificationError }
+  )(App)
+)

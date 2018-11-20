@@ -1,32 +1,33 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { Alert } from 'react-bootstrap'
 
-const Notification = ({ message, info, clearNotification }) => {
-  if (message !== null) {
-    setTimeout(() => {
-      clearNotification()
-    }, 3000)
-    return (
-      <div className="error">
-        {message}
-      </div>
-    )
-  } else if (info !== null) {
-    setTimeout(() => {
-      clearNotification()
-    }, 2000)
-    return (
-      <div className="info">
-        {info}
-      </div>
-    )
-  } else {
+class NotificationBase extends React.Component {
+  render() {
+    if (this.props.notification.type > 0) {
+      const style = {
+        marginTop: '10px'
+      }
+      return (
+        <Alert style={style} bsStyle={ this.props.notification.type === 2 ? 'danger' : 'success' }>
+          {this.props.notification.content}
+        </Alert>
+      )
+    }
+
+    // info is empty, don't show anything
     return null
   }
 }
 
-Notification.propTypes = {
-  clearNotification: PropTypes.func.isRequired
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  }
 }
+
+const Notification = connect(
+  mapStateToProps
+)(NotificationBase)
 
 export default Notification
