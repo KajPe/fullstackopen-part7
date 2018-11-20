@@ -2,12 +2,14 @@ const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 
 blogsRouter.get('/', async (request, response) => {
   try {
     const blogs = await Blog
       .find({})
       .populate('user', { username: 1, name: 1 })
+      .populate('comments', { comment: 1 })
 
     if (blogs) {
       response.json(blogs.map(Blog.format))
@@ -17,6 +19,48 @@ blogsRouter.get('/', async (request, response) => {
     }
   } catch (exception) {
     response.status(500).send({ error: 'Unable to get blogs' })
+  }
+})
+
+blogsRouter.post('/:id/comment', async (request, response) => {
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!request.token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+    if (request.body.comment === undefined) {
+      return response.status(400).json({ error: 'comment missing' })
+    }
+
+    // Save comment
+    const newcomment = {
+      id: request.params.id,
+      comment: request.body.comment,
+    }
+    const comment = new Comment(newcomment)
+    const savedComment = await comment.save()
+
+    // Get blog
+    const blog = await Blog
+      .findById(request.params.id)
+      .populate('user', { username: 1, name: 1 })
+      .populate('comments', { comment: 1 })
+
+    // Write comment id to blog
+    const updBlogComment = {
+      _id: savedComment._id,
+      comment: savedComment.comment
+    }
+    blog.comments = blog.comments.concat(updBlogComment)
+    await blog.save()
+    
+    response.status(201).json(Blog.format(blog))
+  } catch (exception) {
+    if (exception.name === 'JsonWebTokenError' ) {
+      response.status(401).json({ error: exception.message })
+    } else {
+      response.status(500).send({ error: 'Unable to save blog comment' })
+    }
   }
 })
 
@@ -54,6 +98,7 @@ blogsRouter.post('/', async (request, response) => {
     const anewBlog = await Blog
       .findById(savedBlog._id)
       .populate('user', { username: 1, name: 1 })
+      .populate('comments', { comment: 1 })
     response.status(201).json(Blog.format(anewBlog))
   } catch (exception) {
     if (exception.name === 'JsonWebTokenError' ) {
@@ -112,6 +157,7 @@ blogsRouter.put('/:id', async (request, response) => {
     const aBlog = await Blog
       .findById(request.params.id)
       .populate('user', { username: 1, name: 1 })
+      .populate('comments', { comment: 1 })
     response.status(200).json(aBlog)
   } catch (exception) {
     response.status(400).send({ error: 'malformatted id' })

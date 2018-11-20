@@ -34,7 +34,8 @@ class App extends React.Component {
       title: '',
       author: '',
       url: '',
-      togglable: false
+      togglable: false,
+      newcomment: ''
     }
   }
 
@@ -118,6 +119,25 @@ class App extends React.Component {
   updateLike = (event, blog) => {
     event.preventDefault()
     this.likeBlog(blog)
+  }
+
+  addNewComment = async (event, id) => {
+    event.preventDefault()
+    try {
+      const commentObj = {
+        comment: this.state.newcomment
+      }
+      const updBlog = await blogService.addComment(id, commentObj)
+      const blogs = this.state.blogs.map(ab => ab.id !== id ? ab : updBlog)
+      this.setState({
+        blogs: blogs,
+        newcomment: ''
+      })
+    } catch(exception) {
+      this.setState({
+        error: 'Failed to save comment'
+      })
+    }
   }
 
   deleteBlog = async (blog) => {
@@ -240,8 +260,11 @@ class App extends React.Component {
       if (blog !== undefined) {
         return (
           <SimpleBlog 
-            blog={blog} 
-            onClick={(e) => this.updateLike(e, blog)} 
+            blog={blog}
+            onClick={(e) => this.updateLike(e, blog)}
+            onSubmitComment={(e) => this.addNewComment(e, id)}
+            newcomment={this.state.newcomment}
+            handleChange={this.handleFieldChange}
           />
         )
       } else {

@@ -62,6 +62,14 @@ content-type: application/json
   "likes": 5
 }
 
+### Update blog with comment
+POST http://localhost:3000/blogs/5bc4cfb2de61f021d4cc5923/comment
+content-type: application/json
+
+{
+  "comment": "Hello"
+}
+
 
 ### Get users
 GET http://localhost:3003/api/users

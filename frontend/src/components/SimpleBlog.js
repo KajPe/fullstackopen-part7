@@ -1,7 +1,8 @@
 import React from 'react'
-import { Button, Row, Col, Panel } from 'react-bootstrap'
+import { Button, Row, Col, Panel, Form, FormControl } from 'react-bootstrap'
+import Comment from './Comments'
 
-const SimpleBlog = ({ blog, onClick }) => (
+const SimpleBlog = ({ blog, onClick, onSubmitComment, newcomment, handleChange }) => (
   <div style={{ paddingTop: '50px' }}>
     <Row>
       <Col smOffset={1} sm={10}>
@@ -19,12 +20,27 @@ const SimpleBlog = ({ blog, onClick }) => (
             </div>
             <br></br>
             Added by : {blog.user ? blog.user.name : 'Unknown' }
+            <div style={{ marginTop: '30px' }}>
+              <b>Comments</b>
+              {blog.comments.map(comment =>
+                <Comment key={comment._id} comment={comment.comment} />
+              )}
+              <br></br>
+              <Form horizontal className="loginform" onSubmit={onSubmitComment}>
+                <FormControl
+                  type="text"
+                  name="newcomment"
+                  value={newcomment}
+                  onChange={handleChange}
+                />
+                <Button type="submit" bsStyle="primary" style={{ width: '200px' }}>Add Comment</Button>
+              </Form>                
+            </div>
           </Panel.Body>
         </Panel>
       </Col>
     </Row>
   </div>
 )
-
 
 export default SimpleBlog
