@@ -1,37 +1,22 @@
 import React from 'react'
 import { Well } from 'react-bootstrap'
-import userService from '../services/users'
 import { notificationError } from './../reducers/notificationReducer'
 import { connect } from 'react-redux'
 
+const getUser = (users, id) => {
+  return users.find(a => a.id === id)
+}
 
-class ShowUser extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      user: null
-    }
-  }
-
-  async componentDidMount() {
-    try {
-      const user = await userService.getUser(this.props.id)
-      this.setState({ user })
-    } catch(exception) {
-      this.props.notificationError('Failed to retrieve user')
-    }
-  }
-
-
+class ShowUserBase extends React.Component {
   render() {
-    if (this.state.user) {
+    if (this.props.user) {
       return (
         <div>
-          <h3>User: {this.state.user.name}</h3>
+          <h3>User: {this.props.user.name}</h3>
           <div style={{ paddingLeft: '20px', paddingTop: '10px' }}>Added blogs</div>
           <ul>
             {
-              this.state.user.blogs
+              this.props.user.blogs
                 .map(blog =>
                   <Well key={blog._id} bsSize="small" style={{ marginBottom: '5px' }}>
                     {blog.title} by {blog.author}
@@ -47,7 +32,15 @@ class ShowUser extends React.Component {
   }
 }
 
-export default connect(
-  null,
+const mapStateToProps = (state, ownProps) => {
+  return {
+    user: getUser(state.users, ownProps.id) 
+  }
+}
+
+const ShowUser = connect(
+  mapStateToProps,
   { notificationError }
-)(ShowUser)
+)(ShowUserBase)
+
+export default ShowUser

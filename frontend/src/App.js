@@ -13,6 +13,7 @@ import ShowUser from './components/ShowUser'
 import SimpleBlog from './components/SimpleBlog'
 import Notification from './components/Notification'
 import { notificationInfo, notificationError } from './reducers/notificationReducer'
+import { usersInitialization } from './reducers/usersReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -40,6 +41,10 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
+    this.props.usersInitialization().catch( () => {
+      this.props.notificationError('Failed to retrieve users')
+    })
+
     try {
       const blogs = await blogService.getAll()
       this.setState({ blogs })
@@ -305,6 +310,6 @@ class App extends React.Component {
 export default withRouter(
   connect(
     null,
-    { notificationInfo, notificationError }
+    { notificationInfo, notificationError, usersInitialization }
   )(App)
 )

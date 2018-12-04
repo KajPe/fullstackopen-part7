@@ -1,27 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import userService from '../services/users'
 import { Badge, Well, Grid, Row, Col } from 'react-bootstrap'
-import { notificationError } from './../reducers/notificationReducer'
 import { connect } from 'react-redux'
+import { usersInitialization } from './../reducers/usersReducer'
 
-class ShowUsers extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      users: []
-    }
-  }
-
-  async componentDidMount() {
-    try {
-      const users = await userService.getAll()
-      this.setState({ users })
-    } catch(exception) {
-      this.props.notificationError('Failed to retrieve users')
-    }
-  }
-
+class ShowUsersBase extends React.Component {
   render() {
     return (
       <div>
@@ -32,7 +15,7 @@ class ShowUsers extends React.Component {
             <Col sm={2} className="text-center">Blogs added</Col>
           </Row>
           {
-            this.state.users
+            this.props.users
               .map(user =>
                 <Well key={user.id} bsSize="small" style={{ marginBottom: '5px' }}>
                   <Row>
@@ -48,7 +31,15 @@ class ShowUsers extends React.Component {
   }
 }
 
-export default connect(
-  null,
-  { notificationError }
-)(ShowUsers)
+const mapStateToProps = (state) => {
+  return {
+    users: state.users
+  }
+}
+
+const ShowUsers = connect(
+  mapStateToProps,
+  { usersInitialization }
+)(ShowUsersBase)
+
+export default ShowUsers
