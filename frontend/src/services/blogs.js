@@ -29,7 +29,7 @@ const update = async (blog) => {
   return response.data
 }
 
-const remove = async (id) => {
+const removeBlog = async (id) => {
   const config = {
     headers: { 'Authorization': token }
   }
@@ -45,4 +45,4 @@ const addComment = async (id, comment) => {
   return response.data
 }
 
-export default { getAll, create, setToken, update, remove, addComment }
+export default { getAll, create, setToken, update, removeBlog, addComment }

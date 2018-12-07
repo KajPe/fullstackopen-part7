@@ -1,19 +1,18 @@
 import React from 'react'
-import Blog from './components/Blog'
+import ShowBlogs from './components/ShowBlogs'
 import { Route, Redirect, withRouter, NavLink } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import NewBlog from './components/NewBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import ShowUsers from './components/ShowUsers'
 import ShowUser from './components/ShowUser'
-import SimpleBlog from './components/SimpleBlog'
+import ShowBlog from './components/ShowBlog'
 import Notification from './components/Notification'
 import { notificationInfo, notificationError } from './reducers/notificationReducer'
 import { usersInitialization } from './reducers/usersReducer'
+import { blogsInitialization } from './reducers/blogReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -28,15 +27,9 @@ class App extends React.Component {
     }
 
     this.state = {
-      blogs: [],
       username: '',
       password: '',
-      user: user,
-      title: '',
-      author: '',
-      url: '',
-      togglable: false,
-      newcomment: ''
+      user: user
     }
   }
 
@@ -44,109 +37,9 @@ class App extends React.Component {
     this.props.usersInitialization().catch( () => {
       this.props.notificationError('Failed to retrieve users')
     })
-
-    try {
-      const blogs = await blogService.getAll()
-      this.setState({ blogs })
-    } catch(exception) {
+    this.props.blogsInitialization().catch( () => {
       this.props.notificationError('Failed to retrieve blogs')
-    }
-  }
-
-  toggleVisibility = (event) => {
-    this.setState({ togglable: !this.state.togglable })
-  }
-
-  handleFieldChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
-  }
-
-  addBLog = async (event,title,author,url) => {
-    event.preventDefault()
-    try {
-      const blogObj = {
-        title: title,
-        author: author,
-        url: url
-      }
-
-      const anewBlog = await blogService.create(blogObj)
-      const msg = 'A new blog "' + title + '" by ' + author + ' added.'
-      this.props.notificationInfo(msg)
-      this.setState({
-        blogs: this.state.blogs.concat(anewBlog),
-        title:'',
-        author:'',
-        url:'',
-        togglable: false
-      })
-    } catch(exception) {
-      this.props.notificationError('Unable to save blog')
-    }
-  }
-
-  likeBlog = async (blog) => {
-    try {
-      const blogObj = {
-        id: blog.id,
-        user: blog.user,
-        likes: blog.likes + 1,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url
-      }
-
-      const updBlog = await blogService.update(blogObj)
-      const msg = 'The blog "' + blog.title + '" was liked.'
-      this.props.notificationInfo(msg)
-      const blogs = this.state.blogs.map(ab => ab.id !== blog.id ? ab : updBlog)
-      this.setState({
-        blogs: blogs
-      })
-    } catch(exception) {
-      this.props.notificationError('Unable to update blog')
-    }
-  }
-
-  updateLike = (event, blog) => {
-    event.preventDefault()
-    this.likeBlog(blog)
-  }
-
-  addNewComment = async (event, id) => {
-    event.preventDefault()
-    try {
-      const commentObj = {
-        comment: this.state.newcomment
-      }
-      const updBlog = await blogService.addComment(id, commentObj)
-      const blogs = this.state.blogs.map(ab => ab.id !== id ? ab : updBlog)
-      this.setState({
-        blogs: blogs,
-        newcomment: ''
-      })
-      this.props.notificationInfo('Added new comment')
-    } catch(exception) {
-      this.props.notificationError('Failed to save comment')
-    }
-  }
-
-  deleteBlog = async (blog) => {
-    try {
-      await blogService.remove(blog.id)
-      const msg = 'The blog "' + blog.title + '" was removed.'
-      this.props.notificationInfo(msg)
-      const blogs = this.state.blogs.filter(ab => ab.id !== blog.id)
-      this.setState({
-        blogs: blogs
-      })
-    } catch(exception) {
-      if (exception.response.data.error) {
-        this.props.notificationError(exception.response.data.error)
-      } else {
-        this.props.notificationError('Unable to remove blog')
-      }
-    }
+    })
   }
 
   login = async (event) => {
@@ -178,21 +71,6 @@ class App extends React.Component {
   }
 
   render() {
-    const NewBlogForm = () => (
-      // ref didn't work here as any change in state by this.handleFieldChange re-renders the App
-      // This would reset Togglable to hidden again.
-      <Togglable buttonLabel="New Blog" visible={this.state.togglable} toggleVisibility={this.toggleVisibility}>
-        <NewBlog 
-          title={this.state.title}
-          author={this.state.author}
-          url={this.state.url}
-          addNewBlog={this.addBLog}
-          handleFieldChange={this.handleFieldChange}
-          toggleVisibility={this.toggleVisibility}
-        />
-      </Togglable>
-    )
-
     const header = () => (
       <div>
         <h1>Blog Application</h1>
@@ -212,56 +90,6 @@ class App extends React.Component {
       </div>
     )
 
-    const showUsers = () => (
-      <div>
-        <ShowUsers />          
-      </div>
-    )
-
-    const showUser = (id) => (
-      <div>
-        <ShowUser id={id} />          
-      </div>
-    )
-
-    const showBlogs = () => (
-      <div>
-        <h3>Blogs</h3>
-        <NewBlogForm />
-        <br></br>
-        {this.state.blogs
-          .sort(function(a,b) {
-            return b.likes - a.likes
-          })
-          .map(blog => 
-            <Blog
-              key={blog.id}
-              blog={blog}
-            />
-          )
-        }
-      </div>
-    )
-
-    const showBlog = (id) => {
-      const blog = this.state.blogs.find(ab => ab.id === id)
-      if (blog !== undefined) {
-        return (
-          <SimpleBlog 
-            blog={blog}
-            onClick={(e) => this.updateLike(e, blog)}
-            onSubmitComment={(e) => this.addNewComment(e, id)}
-            newcomment={this.state.newcomment}
-            handleChange={this.handleFieldChange}
-          />
-        )
-      } else {
-        return (
-          <div>Blog not found ..</div>
-        )
-      }
-    }
-    
     const loginForm = () => {
       return (
         <div>
@@ -297,11 +125,11 @@ class App extends React.Component {
       <div className="container">
         {header()}
         <Notification />
-        <Route exact path='/users' render={() => showUsers() } />
-        <Route exact path='/users/:id' render={({match}) => showUser(match.params.id) } />
+        <Route exact path='/users' render={() => <ShowUsers /> } />
+        <Route exact path='/users/:id' render={({match}) => <ShowUser id={match.params.id} /> } />
         <Route exact path='/login' render={() => loginForm() } />
-        <Route exact path='/' render={() => showBlogs() } />
-        <Route exact path='/blogs/:id' render={({match}) => showBlog(match.params.id) } />
+        <Route exact path='/' render={() => <ShowBlogs /> } />
+        <Route exact path='/blogs/:id' render={({match}) => <ShowBlog id={match.params.id} /> } />
       </div>
     )
   }
@@ -310,6 +138,6 @@ class App extends React.Component {
 export default withRouter(
   connect(
     null,
-    { notificationInfo, notificationError, usersInitialization }
+    { notificationInfo, notificationError, usersInitialization, blogsInitialization }
   )(App)
 )

@@ -1,8 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { Grid, Row, Col, Panel, Button, Form, FormGroup, ControlLabel, FormControl } from 'react-bootstrap'
+import { addBLog } from './../reducers/blogReducer'
+import { connect } from 'react-redux'
+import { notificationError, notificationInfo } from './../reducers/notificationReducer'
+import { usersInitialization } from './../reducers/usersReducer'
 
-class NewBlog extends React.Component {
+class NewBlogBase extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -10,6 +13,27 @@ class NewBlog extends React.Component {
       author: '',
       url: '',
     }
+  }
+
+  onNewBlog = (event) => {
+    event.preventDefault()
+    this.props.addBLog(this.state.title,this.state.author,this.state.url)
+    .then( () => {
+      this.props.toggleVisibility()
+      const msg = 'A new blog "' + this.state.title + '" by ' + this.state.author + ' added.'
+      this.props.notificationInfo(msg)
+      this.setState({
+        title:'',
+        author:'',
+        url:''
+      })
+
+        // Because we added a blog, the user count has changed. Reload users.
+        this.props.usersInitialization()
+    })
+    .catch( () => {
+      this.props.notificationError('Unable to save blog')
+    })
   }
 
   handleFieldChange = (event) => {
@@ -26,7 +50,7 @@ class NewBlog extends React.Component {
                 <Panel.Title componentClass="h1">Create new blog</Panel.Title>
               </Panel.Heading>
               <Panel.Body>
-                <Form horizontal className="loginform" onSubmit={e => this.props.addNewBlog(e,this.state.title,this.state.author,this.state.url)}>
+                <Form horizontal className="loginform" onSubmit={event => this.onNewBlog(event) }>
                   <FormGroup>
                     <Col componentClass={ControlLabel} sm={2}>
                       Author :
@@ -35,7 +59,7 @@ class NewBlog extends React.Component {
                       <FormControl
                         type="text"
                         name="title"
-                        value={this.title}
+                        value={this.state.title}
                         onChange={this.handleFieldChange}
                       />
                     </Col>
@@ -48,7 +72,7 @@ class NewBlog extends React.Component {
                       <FormControl
                         type="text"
                         name="author"
-                        value={this.author}
+                        value={this.state.author}
                         onChange={this.handleFieldChange}
                       />
                     </Col>
@@ -61,7 +85,7 @@ class NewBlog extends React.Component {
                       <FormControl
                         type="text"
                         name="url"
-                        value={this.url}
+                        value={this.state.url}
                         onChange={this.handleFieldChange}
                       />
                     </Col>
@@ -84,8 +108,9 @@ class NewBlog extends React.Component {
   }
 }
 
-NewBlog.propTypes = {
-  addNewBlog: PropTypes.func.isRequired
-}
+const NewBlog = connect(
+  null,
+  { addBLog, notificationInfo, notificationError, usersInitialization }
+)(NewBlogBase)
 
 export default NewBlog
