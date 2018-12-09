@@ -19,22 +19,22 @@ class NewBlogBase extends React.Component {
   onNewBlog = (event) => {
     event.preventDefault()
     this.props.addBLog(this.state.title,this.state.author,this.state.url)
-    .then( () => {
-      this.modalHide()
-      const msg = 'A new blog "' + this.state.title + '" by ' + this.state.author + ' added.'
-      this.props.notificationInfo(msg)
-      this.setState({
-        title:'',
-        author:'',
-        url:''
-      })
+      .then( () => {
+        this.modalHide()
+        const msg = 'A new blog "' + this.state.title + '" by ' + this.state.author + ' added.'
+        this.props.notificationInfo(msg)
+        this.setState({
+          title:'',
+          author:'',
+          url:''
+        })
 
-      // Because we added a blog, the user count has changed. Reload users.
-      this.props.usersInitialization()
-    })
-    .catch( () => {
-      this.props.notificationError('Unable to save blog')
-    })
+        // Because we added a blog, the user count has changed. Reload users.
+        this.props.usersInitialization()
+      })
+      .catch( () => {
+        this.props.notificationError('Unable to save blog')
+      })
   }
 
   modalShow = () => {
@@ -73,7 +73,7 @@ class NewBlogBase extends React.Component {
                         onChange={this.handleFieldChange}
                       />
                     </Col>
-                  </FormGroup>                  
+                  </FormGroup>
                   <FormGroup>
                     <Col componentClass={ControlLabel} sm={2}>
                       Author :

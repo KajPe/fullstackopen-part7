@@ -18,7 +18,7 @@ class ShowBlogsBase extends React.Component {
     }
   }
 
-  toggleVisibility = (event) => {
+  toggleVisibility = () => {
     this.setState({ togglable: !this.state.togglable })
   }
 
@@ -40,22 +40,22 @@ class ShowBlogsBase extends React.Component {
 
   deleteBlog = () => {
     this.props.deleteBlog(this.state.blog)
-    .then( () => {
-      this.modalHide()
-      const msg = 'The blog "' + this.state.blog.title + '" was removed.'
-      this.props.notificationInfo(msg)
+      .then( () => {
+        this.modalHide()
+        const msg = 'The blog "' + this.state.blog.title + '" was removed.'
+        this.props.notificationInfo(msg)
 
-      // Because we deleted a blog, the user count has changed. Reload users.
-      this.props.usersInitialization()
-    })
-    .catch( (exception) => {
-      this.modalHide()
-      if (exception.response.data.error) {
-        this.props.notificationError(exception.response.data.error)
-      } else {
-        this.props.notificationError('Unable to remove blog')
-      }
-    })
+        // Because we deleted a blog, the user count has changed. Reload users.
+        this.props.usersInitialization()
+      })
+      .catch( (exception) => {
+        this.modalHide()
+        if (exception.response.data.error) {
+          this.props.notificationError(exception.response.data.error)
+        } else {
+          this.props.notificationError('Unable to remove blog')
+        }
+      })
   }
 
   render() {
@@ -71,7 +71,7 @@ class ShowBlogsBase extends React.Component {
           <Modal.Footer>
             <Button onClick={this.deleteBlog} bsStyle="primary">Remove</Button>
             <Button onClick={this.modalHide}>Cancel</Button>
-          </Modal.Footer>          
+          </Modal.Footer>
         </Modal>
 
         <h3><i>Blogs</i></h3>
@@ -81,7 +81,7 @@ class ShowBlogsBase extends React.Component {
           .sort(function(a,b) {
             return b.likes - a.likes
           })
-          .map(blog => 
+          .map(blog =>
             <Blog
               key={blog.id}
               blog={blog}

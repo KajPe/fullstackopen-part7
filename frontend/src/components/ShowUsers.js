@@ -21,7 +21,7 @@ class ShowUsersBase extends React.Component {
                   <Row>
                     <Col sm={2}><Link to={`/users/${user.id}`}>{user.name}</Link></Col>
                     <Col sm={2} className="text-center"><Badge>{user.blogs.length}</Badge></Col>
-                  </Row>                
+                  </Row>
                 </Well>
               )
           }

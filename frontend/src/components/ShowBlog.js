@@ -24,31 +24,31 @@ class ShowBlogBase extends React.Component {
   updateLike = (event) => {
     event.preventDefault()
     this.props.likeBlog(this.props.blog)
-    .then( () => {
-      const msg = 'The blog "' + this.props.blog.title + '" was liked.'
-      this.props.notificationInfo(msg)
-    })
-    .catch( () => {
-      this.props.notificationError('Unable to update blog')
-    })
+      .then( () => {
+        const msg = 'The blog "' + this.props.blog.title + '" was liked.'
+        this.props.notificationInfo(msg)
+      })
+      .catch( () => {
+        this.props.notificationError('Unable to update blog')
+      })
   }
 
   addNewComment = async (event) => {
     event.preventDefault()
     this.props.addBlogComment(this.props.blog.id, this.state.newcomment)
-    .then( () => {
-      this.setState({ newcomment: '' })
-      this.props.notificationInfo('Added new comment')
-    })
-    .catch( () => {
-      this.props.notificationError('Failed to save comment')
-    })
+      .then( () => {
+        this.setState({ newcomment: '' })
+        this.props.notificationInfo('Added new comment')
+      })
+      .catch( () => {
+        this.props.notificationError('Failed to save comment')
+      })
   }
 
   render() {
     if (this.props.blog !== undefined) {
       return (
-        <SimpleBlog 
+        <SimpleBlog
           blog={this.props.blog}
           onClick={(event) => this.updateLike(event)}
           onSubmitComment={(event) => this.addNewComment(event)}

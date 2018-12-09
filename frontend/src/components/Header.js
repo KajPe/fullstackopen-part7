@@ -8,7 +8,7 @@ class Header extends React.Component {
       <div>
         <Nav pullRight className="menuLink">
           <NavItem componentClass={Link} href='/' to='/'>
-            { (this.props.url.startsWith('/blogs') || this.props.url === '/' ) ? 
+            { (this.props.url.startsWith('/blogs') || this.props.url === '/' ) ?
               <Label className="menuitemAct">Blogs</Label> : <Label className="menuitem">Blogs</Label> }
           </NavItem>
           <NavItem componentClass={Link} href="/users" to="/users">

@@ -26,9 +26,9 @@ class AppBase extends React.Component {
         this.props.history.push('/')
       }
       this.props.tokenLogin(loggedUserJSON)
-      .then( () => {
-        blogService.setToken(this.props.login.token)
-      })
+        .then( () => {
+          blogService.setToken(this.props.login.token)
+        })
     } else {
       if (this.props.history.location.pathname !== '/login') {
         // Redirect to login page
@@ -48,27 +48,27 @@ class AppBase extends React.Component {
 
   processLogin = (username, password, loginfailed) => {
     this.props.dologin(username, password)
-    .then( () => {
-      window.localStorage.setItem('loggedBlogUser', JSON.stringify(this.props.login))
-      const msg = 'User ' + this.props.login.name + ' successfully logged in.'
-      this.props.notificationInfo(msg)
-      blogService.setToken(this.props.login.token)
-      this.props.history.push('/')
-    })
-    .catch( () => {
-      loginfailed()
-    })
+      .then( () => {
+        window.localStorage.setItem('loggedBlogUser', JSON.stringify(this.props.login))
+        const msg = 'User ' + this.props.login.name + ' successfully logged in.'
+        this.props.notificationInfo(msg)
+        blogService.setToken(this.props.login.token)
+        this.props.history.push('/')
+      })
+      .catch( () => {
+        loginfailed()
+      })
   }
 
   processLogout = () => {
     const msg = 'User ' + this.props.login.name + ' logged out.'
     this.props.dologout()
-    .then( () => {
-      window.localStorage.removeItem('loggedBlogUser')
-      blogService.setToken("")
-      this.props.notificationInfo(msg)
-      this.props.history.push('/login')
-    })
+      .then( () => {
+        window.localStorage.removeItem('loggedBlogUser')
+        blogService.setToken('')
+        this.props.notificationInfo(msg)
+        this.props.history.push('/login')
+      })
   }
 
   render() {
@@ -76,16 +76,16 @@ class AppBase extends React.Component {
     return (
       <div className="container">
         <Header
-          login={this.props.login} 
+          login={this.props.login}
           url={this.props.history.location.pathname}
           processLogout={this.processLogout}
         />
         <Notification />
         <Route exact path='/users' render={() => <ShowUsers /> } />
-        <Route exact path='/users/:id' render={({match}) => <ShowUser id={match.params.id} /> } />
+        <Route exact path='/users/:id' render={({ match }) => <ShowUser id={match.params.id} /> } />
         <Route exact path='/login' render={() => <LoginForm handleSubmit={this.processLogin} /> } />
         <Route exact path='/' render={() => <ShowBlogs /> } />
-        <Route exact path='/blogs/:id' render={({match}) => <ShowBlog id={match.params.id} /> } />
+        <Route exact path='/blogs/:id' render={({ match }) => <ShowBlog id={match.params.id} /> } />
       </div>
     )
   }

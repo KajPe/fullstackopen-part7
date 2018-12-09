@@ -15,7 +15,7 @@ class ShowUserBase extends React.Component {
         <div>
           <h3><i>User: {this.props.user.name}</i></h3>
           <div className="paddingLeft30px paddingTop10px">
-          { this.props.user.blogs.length > 0 ? 'Added blogs' : 'User has no blogs written' }</div>
+            { this.props.user.blogs.length > 0 ? 'Added blogs' : 'User has no blogs written' }</div>
           <ul>
             {
               this.props.user.blogs
@@ -36,7 +36,7 @@ class ShowUserBase extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    user: getUser(state.users, ownProps.id) 
+    user: getUser(state.users, ownProps.id)
   }
 }
 

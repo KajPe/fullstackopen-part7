@@ -173,3 +173,15 @@ html {
 .paddingTop10px {
   padding-top: 10px;
 }
+
+.loginfailed {
+  padding-bottom: 5px;
+  font-size: 30px;
+  color: red;
+}
+
+.loginfailedbutton {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  width: 150px;
+}

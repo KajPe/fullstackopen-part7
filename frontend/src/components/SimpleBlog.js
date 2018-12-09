@@ -4,7 +4,7 @@ import Comment from './Comments'
 
 const SimpleBlog = ({ blog, onClick, onSubmitComment, newcomment, handleChange }) => (
   <div>
-    <h3><i>Blog: "{blog.title}"</i></h3>
+    <h3><i>Blog: &quot;{blog.title}&quot;</i></h3>
     <h4>... by: {blog.author}</h4>
     <h4>... added by : {blog.user ? blog.user.name : 'Unknown' }</h4>
     <div className="marginLeft50px marginTop30px marginBottom50px">URL: <a href={blog.url}>{blog.url}</a></div>

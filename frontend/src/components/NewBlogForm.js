@@ -1,6 +1,5 @@
 import React from 'react'
 import Togglable from './Togglable'
-
 import NewBlog from './NewBlog'
 
 const NewBlogForm = ({ togglable, toggleVisibility, buttonLabel }) => (
