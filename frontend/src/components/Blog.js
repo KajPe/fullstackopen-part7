@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Well, Button, Glyphicon, Row, Col } from 'react-bootstrap'
 
 const Blog = ({ blog, onRemove }) => (
-  <Well bsSize="small" style={{ marginBottom: '5px' }}>
+  <Well bsSize="small" className="marginBottom5px wellhighlight">
     <Row>
       <Col md={10}>
         <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>

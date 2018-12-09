@@ -8,7 +8,7 @@ class ShowUsersBase extends React.Component {
   render() {
     return (
       <div>
-        <h3>Users</h3>
+        <h3><i>Users</i></h3>
         <Grid>
           <Row>
             <Col sm={2} style={{ paddingLeft: '50px' }}>User</Col>
@@ -17,7 +17,7 @@ class ShowUsersBase extends React.Component {
           {
             this.props.users
               .map(user =>
-                <Well key={user.id} bsSize="small" style={{ marginBottom: '5px' }}>
+                <Well key={user.id} bsSize="small" style={{ marginBottom: '5px' }} className="wellhighlight">
                   <Row>
                     <Col sm={2}><Link to={`/users/${user.id}`}>{user.name}</Link></Col>
                     <Col sm={2} className="text-center"><Badge>{user.blogs.length}</Badge></Col>

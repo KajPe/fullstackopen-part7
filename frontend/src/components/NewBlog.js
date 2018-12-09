@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Row, Col, Panel, Button, Form, FormGroup, ControlLabel, FormControl } from 'react-bootstrap'
+import { Row, Col, Button, Form, FormGroup, ControlLabel, FormControl, Modal } from 'react-bootstrap'
 import { addBLog } from './../reducers/blogReducer'
 import { connect } from 'react-redux'
 import { notificationError, notificationInfo } from './../reducers/notificationReducer'
@@ -9,6 +9,7 @@ class NewBlogBase extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      show: false,
       title: '',
       author: '',
       url: '',
@@ -19,7 +20,7 @@ class NewBlogBase extends React.Component {
     event.preventDefault()
     this.props.addBLog(this.state.title,this.state.author,this.state.url)
     .then( () => {
-      this.props.toggleVisibility()
+      this.modalHide()
       const msg = 'A new blog "' + this.state.title + '" by ' + this.state.author + ' added.'
       this.props.notificationInfo(msg)
       this.setState({
@@ -28,12 +29,20 @@ class NewBlogBase extends React.Component {
         url:''
       })
 
-        // Because we added a blog, the user count has changed. Reload users.
-        this.props.usersInitialization()
+      // Because we added a blog, the user count has changed. Reload users.
+      this.props.usersInitialization()
     })
     .catch( () => {
       this.props.notificationError('Unable to save blog')
     })
+  }
+
+  modalShow = () => {
+    this.setState({ show: true })
+  }
+
+  modalHide = () => {
+    this.setState({ show: false })
   }
 
   handleFieldChange = (event) => {
@@ -42,18 +51,19 @@ class NewBlogBase extends React.Component {
 
   render() {
     return (
-      <Grid>
-        <Row>
-          <Col smOffset={1} sm={10}>
-            <Panel bsStyle="primary">
-              <Panel.Heading>
-                <Panel.Title componentClass="h1">Create new blog</Panel.Title>
-              </Panel.Heading>
-              <Panel.Body>
+      <div>
+        <Button bsStyle="primary" onClick={this.modalShow}>{this.props.buttonLabel}</Button>
+        <Modal show={this.state.show} onHide={this.modalHide} dialogClassName="cumodal">
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-lg">Create New Blog</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row>
+              <Col>
                 <Form horizontal className="loginform" onSubmit={event => this.onNewBlog(event) }>
                   <FormGroup>
                     <Col componentClass={ControlLabel} sm={2}>
-                      Author :
+                      Title :
                     </Col>
                     <Col sm={9}>
                       <FormControl
@@ -63,7 +73,7 @@ class NewBlogBase extends React.Component {
                         onChange={this.handleFieldChange}
                       />
                     </Col>
-                  </FormGroup>
+                  </FormGroup>                  
                   <FormGroup>
                     <Col componentClass={ControlLabel} sm={2}>
                       Author :
@@ -91,19 +101,16 @@ class NewBlogBase extends React.Component {
                     </Col>
                   </FormGroup>
                   <FormGroup>
-                    <Col smOffset={4} sm={4}>
-                      <Button type="submit" bsStyle="primary" style={{ width: '200px' }}>Create</Button>
-                    </Col>
-                    <Col smOffset={2} sm={2}>
-                      <Button onClick={this.props.toggleVisibility}>Cancel</Button>
+                    <Col sm={11}>
+                      <Button className="pull-right" type="submit" bsSize="large" bsStyle="primary" style={{ width: '150px' }}>Create</Button>
                     </Col>
                   </FormGroup>
                 </Form>
-              </Panel.Body>
-            </Panel>
-          </Col>
-        </Row>
-      </Grid>
+              </Col>
+            </Row>
+          </Modal.Body>
+        </Modal>
+      </div>
     )
   }
 }

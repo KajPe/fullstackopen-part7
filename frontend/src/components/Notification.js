@@ -5,11 +5,8 @@ import { Alert } from 'react-bootstrap'
 class NotificationBase extends React.Component {
   render() {
     if (this.props.notification.type > 0) {
-      const style = {
-        marginTop: '10px'
-      }
       return (
-        <Alert style={style} bsStyle={ this.props.notification.type === 2 ? 'danger' : 'success' }>
+        <Alert className="alert-fixed" bsStyle={ this.props.notification.type === 2 ? 'danger' : 'success' }>
           {this.props.notification.content}
         </Alert>
       )

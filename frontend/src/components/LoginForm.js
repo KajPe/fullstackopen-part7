@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Form, Button, FormGroup, Row, Col, FormControl, ControlLabel, Panel } from 'react-bootstrap'
+import { Modal, Grid, Form, Button, FormGroup, Row, Col, FormControl, ControlLabel, Panel } from 'react-bootstrap'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -7,8 +7,17 @@ class LoginForm extends React.Component {
 
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      show: false
     }
+  }
+
+  modalShow = () => {
+    this.setState({ show: true })
+  }
+
+  modalHide = () => {
+    this.setState({ show: false })
   }
 
   handleFieldChange = (event) => {
@@ -17,12 +26,23 @@ class LoginForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault()
-    this.props.handleSubmit(this.state.username, this.state.password)
+    this.props.handleSubmit(this.state.username, this.state.password, this.modalShow)
   }
 
   render() {
     return (
-      <Grid>
+      <div>
+        <Modal show={this.state.show} onHide={this.modalHide}>
+          <Modal.Header className="center" style={{  paddingBottom: '5px', fontSize: '30px', color:'red'}}>
+            Login Failed
+          </Modal.Header>
+          <Modal.Body className="center">
+            <h4>Bad username or password</h4>
+            <Button bsStyle="primary" style={{ marginTop: '20px', marginBottom: '10px', width: '150px' }} onClick={this.modalHide}>Ok</Button>
+          </Modal.Body>
+        </Modal>
+
+      <Grid className="logingrid">
         <Row>
           <Col smOffset={3} sm={6}>
             <Panel bsStyle="primary">
@@ -69,6 +89,7 @@ class LoginForm extends React.Component {
           </Col>
         </Row>
       </Grid>
+      </div>
     )
   }
 }

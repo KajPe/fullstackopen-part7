@@ -2,7 +2,7 @@ import React from 'react'
 import { Well } from 'react-bootstrap'
 
 const Comment = ({ comment }) => (
-  <Well bsSize="small" style={{ marginBottom: '5px' }}>
+  <Well bsSize="small" className="marginBottom5px wellhighlight">
     {comment}
   </Well>
 )
