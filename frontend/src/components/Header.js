@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Navbar, Nav, NavItem, Label } from 'react-bootstrap'
 import { Link  } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 class Header extends React.Component {
   render() {
@@ -36,6 +37,12 @@ class Header extends React.Component {
       </div>
     )
   }
+}
+
+Header.propTypes = {
+  url: PropTypes.string.isRequired,
+  login: PropTypes.oneOfType([ PropTypes.array.isRequired, PropTypes.object.isRequired ]),
+  processLogout: PropTypes.func.isRequired
 }
 
 export default Header

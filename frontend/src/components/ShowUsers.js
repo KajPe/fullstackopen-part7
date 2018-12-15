@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Badge, Well, Grid, Row, Col } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { usersInitialization } from './../reducers/usersReducer'
+import PropTypes from 'prop-types'
 
 class ShowUsersBase extends React.Component {
   render() {
@@ -35,6 +36,10 @@ const mapStateToProps = (state) => {
   return {
     users: state.users
   }
+}
+
+ShowUsersBase.propTypes = {
+  users: PropTypes.array.isRequired
 }
 
 const ShowUsers = connect(

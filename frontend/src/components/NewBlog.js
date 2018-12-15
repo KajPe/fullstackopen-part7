@@ -4,6 +4,7 @@ import { addBLog } from './../reducers/blogReducer'
 import { connect } from 'react-redux'
 import { notificationError, notificationInfo } from './../reducers/notificationReducer'
 import { usersInitialization } from './../reducers/usersReducer'
+import PropTypes from 'prop-types'
 
 class NewBlogBase extends React.Component {
   constructor(props) {
@@ -113,6 +114,14 @@ class NewBlogBase extends React.Component {
       </div>
     )
   }
+}
+
+NewBlogBase.propTypes = {
+  addBLog: PropTypes.func.isRequired,
+  notificationInfo: PropTypes.func.isRequired,
+  notificationError: PropTypes.func.isRequired,
+  usersInitialization: PropTypes.func.isRequired,
+  buttonLabel: PropTypes.string.isRequired,
 }
 
 const NewBlog = connect(

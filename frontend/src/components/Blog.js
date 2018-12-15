@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Well, Button, Glyphicon, Row, Col } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, onRemove }) => (
   <Well bsSize="small" className="marginBottom5px wellhighlight">
@@ -14,5 +15,10 @@ const Blog = ({ blog, onRemove }) => (
     </Row>
   </Well>
 )
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  onRemove: PropTypes.func.isRequired
+}
 
 export default Blog

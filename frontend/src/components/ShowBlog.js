@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import SimpleBlog from './SimpleBlog'
 import { addBlogComment, likeBlog } from './../reducers/blogReducer'
 import { notificationError, notificationInfo } from './../reducers/notificationReducer'
+import PropTypes from 'prop-types'
 
 const getBlog = (blogs, id) => {
   return blogs.find(a => a.id === id)
@@ -68,6 +69,14 @@ const mapStateToProps = (state, ownProps) => {
   return {
     blog: getBlog(state.blogs, ownProps.id)
   }
+}
+
+ShowBlogBase.propTypes = {
+  likeBlog: PropTypes.func.isRequired,
+  notificationInfo: PropTypes.func.isRequired,
+  blog: PropTypes.object,
+  notificationError: PropTypes.func.isRequired,
+  addBlogComment: PropTypes.func.isRequired
 }
 
 const ShowBlog = connect(

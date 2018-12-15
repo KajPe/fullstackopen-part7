@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Alert } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 class NotificationBase extends React.Component {
   render() {
@@ -21,6 +22,10 @@ const mapStateToProps = (state) => {
   return {
     notification: state.notification
   }
+}
+
+NotificationBase.propTypes = {
+  notification: PropTypes.object.isRequired
 }
 
 const Notification = connect(

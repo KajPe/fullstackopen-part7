@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, Grid, Form, Button, FormGroup, Row, Col, FormControl, ControlLabel, Panel } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -92,6 +93,10 @@ class LoginForm extends React.Component {
       </div>
     )
   }
+}
+
+LoginForm.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
 }
 
 export default LoginForm

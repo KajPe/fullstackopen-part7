@@ -3,6 +3,7 @@ import { Well } from 'react-bootstrap'
 import { notificationError } from './../reducers/notificationReducer'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const getUser = (users, id) => {
   return users.find(a => a.id === id)
@@ -38,6 +39,10 @@ const mapStateToProps = (state, ownProps) => {
   return {
     user: getUser(state.users, ownProps.id)
   }
+}
+
+ShowUserBase.propTypes = {
+  user: PropTypes.object.isRequired
 }
 
 const ShowUser = connect(

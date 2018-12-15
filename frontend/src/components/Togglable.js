@@ -21,7 +21,9 @@ class Togglable extends React.Component {
 }
 
 Togglable.propTypes = {
-  buttonLabel: PropTypes.string.isRequired
+  buttonLabel: PropTypes.string.isRequired,
+  visible: PropTypes.bool.isRequired,
+  toggleVisibility: PropTypes.func.isRequired
 }
 
 export default Togglable

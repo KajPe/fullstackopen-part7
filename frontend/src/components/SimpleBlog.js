@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Form, FormControl } from 'react-bootstrap'
 import Comment from './Comments'
+import PropTypes from 'prop-types'
 
 const SimpleBlog = ({ blog, onClick, onSubmitComment, newcomment, handleChange }) => (
   <div>
@@ -29,5 +30,13 @@ const SimpleBlog = ({ blog, onClick, onSubmitComment, newcomment, handleChange }
     </Form>
   </div>
 )
+
+SimpleBlog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+  onSubmitComment: PropTypes.func.isRequired,
+  newcomment: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired
+}
 
 export default SimpleBlog

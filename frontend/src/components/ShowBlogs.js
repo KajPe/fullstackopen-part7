@@ -6,6 +6,7 @@ import { notificationError, notificationInfo } from './../reducers/notificationR
 import { usersInitialization } from './../reducers/usersReducer'
 import NewBlog from './NewBlog'
 import { Button, Modal } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 class ShowBlogsBase extends React.Component {
   constructor(props) {
@@ -98,6 +99,14 @@ const mapStateToProps = (state) => {
   return {
     blogs: state.blogs
   }
+}
+
+ShowBlogsBase.propTypes = {
+  deleteBlog: PropTypes.func.isRequired,
+  notificationInfo: PropTypes.func.isRequired,
+  usersInitialization: PropTypes.func.isRequired,
+  notificationError: PropTypes.func.isRequired,
+  blogs: PropTypes.oneOfType([ PropTypes.array.isRequired, PropTypes.object.isRequired ])
 }
 
 const ShowBlogs = connect(
